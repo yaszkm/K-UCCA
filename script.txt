@@ -1,4 +1,4 @@
-# Parses XML files (in UCCA format) and writes a passage per sentence
+# Parse XML files (in UCCA format) and convert to sentences
 # https://github.com/huji-nlp/ucca/blob/411352da42c286674ff22c870e860fb33f3682f5/scripts/standard_to_sentences.py
 pip install git+https://github.com/huji-nlp/ucca
 python -m scripts.standard_to_sentences -o kr_sentences -l ko kr/*
