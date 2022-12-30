@@ -1,0 +1,26 @@
+# Parses XML files (in UCCA format) and writes a passage per sentence
+# https://github.com/huji-nlp/ucca/blob/411352da42c286674ff22c870e860fb33f3682f5/scripts/standard_to_sentences.py
+pip install git+https://github.com/huji-nlp/ucca
+python -m scripts.standard_to_sentences -o kr_sentences -l ko kr/*
+
+# Add the "lang" attribute
+# https://github.com/huji-nlp/semstr/blob/master/semstr/scripts/set_lang.py
+pip install git+https://github.com/huji-nlp/semstr/tree/master/semstr
+python -m semstr.scripts.set_lang kr_sentences/* -o kr_sentences_lang -l ko
+
+# If on UNIX, convert text to UNIX format 
+dos2unix kr_sentences_lang/*
+
+# Download model
+curl -LO https://github.com/huji-nlp/tupa/releases/download/v1.4.0/bert_multilingual_layers_4_layers_pooling_weighted_align_sum.tar.gz
+tar xvzf bert_multilingual_layers_4_layers_pooling_weighted_align_sum.tar.gz
+
+# Run inferece
+pip install git+https://github.com/danielhers/tupa
+pip install torch==1.7.1
+pip install pytorch_pretrained_bert==0.6.2
+pip install xx
+python -m tupa kr_sentences_lang/* --lang ko -m bert_multilingual_layers_4_layers_pooling_weighted_align_sum -o output
+
+# Evaluate. For unlabeled, add --unlabeled
+python -m scripts.evaluate_standard  inferece ref  -v -f -e --as-table --out-file scores/out.txt --summary-file summary_file.csv --counts-file count_files.csv --errors-file error_file.csv
